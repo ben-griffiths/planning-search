@@ -1,0 +1,42 @@
+/* Center the homepage content vertically */
+.homepage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  justify-content: center;
+}
+
+/* Style the header section */
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  font-size: 32px;
+  color: #333;
+}
+
+.header p {
+  font-size: 16px;
+  color: #666;
+}
+
+/* Style the main content section */
+.main {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  width: 100%;
+}
+
+/* Style the footer section */
+.footer {
+  text-align: center;
+  margin-top: 30px;
+  color: #999;
+  font-size: 14px;
+}
