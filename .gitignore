@@ -25,3 +25,7 @@ yarn-error.log*
 
 lambda.zip
 lambda/temp
+
+__pycache__
+
+venv
