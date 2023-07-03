@@ -23,6 +23,7 @@ export const doOpensearchQuery = async (searchTerm, source) => {
   const payload = JSON.stringify({
     query,
     size: 100,
+    track_total_hits: true,
     sort: [
       {
         _doc: {
@@ -34,7 +35,7 @@ export const doOpensearchQuery = async (searchTerm, source) => {
       source_options: {
         terms: {
           field: "source",
-          size: 10,
+          size: 100,
           min_doc_count: 0,
         },
       },

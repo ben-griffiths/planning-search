@@ -12,13 +12,13 @@ class ChelseaScraper(AbstractScraper):
 
     def goto_results_page(self, week):
         self.driver.get("https://www.rbkc.gov.uk/planning/scripts/weeklyform.asp")
-        search = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located(
-                (By.CSS_SELECTOR, "input[type='submit'][value='search']")
-            )
-        )
-        select = Select(self.driver.find_element(By.NAME, "WeekEndDate"))
         try:
+            search = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located(
+                    (By.CSS_SELECTOR, "input[type='submit'][value='search']")
+                )
+            )
+            select = Select(self.driver.find_element(By.NAME, "WeekEndDate"))
             select.select_by_index(week)
         except:
             return False

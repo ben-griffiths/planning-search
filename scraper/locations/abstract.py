@@ -1,4 +1,5 @@
 import functools
+import time
 import traceback
 from abc import ABC, abstractmethod
 from urllib.parse import urljoin, urlparse
@@ -50,12 +51,13 @@ class AbstractScraper(ABC):
     def wait_for(self):
         pass
 
-    def __init__(self, driver):
+    def __init__(self, driver, index_results):
         self.driver = driver
+        self.index_results = index_results
 
-    def run(self):
+    def run(self, starting_week=0):
         results = []
-        for i in range(self.WEEK_LIMIT):
+        for i in range(starting_week, self.WEEK_LIMIT):
             if not self.goto_results_page(i):
                 break
             week_results = self.scrape_table()
@@ -75,19 +77,24 @@ class AbstractScraper(ABC):
 
                 ### Broken next button safety check
                 if elements == last_elements:
+                    print(f"page {i} no change detected")
                     break
                 last_elements = elements
                 ###
 
-                results += self.parse_page(elements)
+                page = self.parse_page(elements)
+                results += page
 
-                print(f"page {i} complete - {len(results)} found")
+                self.index_results(page)
+                print(f"page {i} complete - {len(page)} found")
 
                 nextButton = self.get_next_button()
                 if not nextButton or not nextButton.is_enabled():
                     break
                 nextButton.click()
+                time.sleep(0.2)
         except:
+            print("HANDLED ERROR:")
             traceback.print_exc()
 
         return results
