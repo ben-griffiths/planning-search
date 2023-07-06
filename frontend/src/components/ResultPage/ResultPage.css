@@ -143,3 +143,20 @@ h1 {
     transform: rotate(360deg);
   }
 }
+.result-industry {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.result-industry .lozenge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: grey;
+  color: #fff;
+  border-radius: 16px;
+  padding: 4px 8px;
+  margin-right: 5px;
+  margin-bottom: 5px;
+}

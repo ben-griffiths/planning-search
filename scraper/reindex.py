@@ -37,15 +37,24 @@ if __name__ == "__main__":
             "reference_no": {"type": "keyword"},
             "detail_url": {"type": "text"},
             "location": {"type": "geo_point"},
-            "source": {"type": "keyword"},  # Add the "source" field
+            "source": {"type": "keyword"},
+            "related_industries": {
+                "type": "nested",
+                "properties": {
+                    "code": {"type": "keyword"},
+                    "relation_score": {"type": "float"},
+                },
+            },
         }
     }
 
     new_index = f"alias_name{random.randint(0, 1000)}"
-    opensearch.indices.create(index=new_index, body={"mappings": mapping})
+    opensearch.indices.create(
+        index=new_index, body={"mappings": mapping}, request_timeout=30
+    )
     print(f"Created {new_index}")
 
-    old_indices = opensearch.indices.get(index=f"{alias_name}*")
+    old_indices = opensearch.indices.get(index=f"{alias_name}*", request_timeout=30)
     print(f"Found: {old_indices}")
 
     for index in old_indices:
@@ -53,10 +62,10 @@ if __name__ == "__main__":
         body = {"source": {"index": index}, "dest": {"index": new_index}}
         opensearch.reindex(body=body, wait_for_completion=True)
         print(f"Reindexed: {index}")
-        opensearch.indices.refresh(index=new_index)
+        opensearch.indices.refresh(index=new_index, request_timeout=30)
 
         # Delete the old index
         opensearch.indices.delete(index=index)
         print(f"Deleted: {index}")
 
-    opensearch.indices.put_alias(index=new_index, name=alias_name)
+    opensearch.indices.put_alias(index=new_index, name=alias_name, request_timeout=30)

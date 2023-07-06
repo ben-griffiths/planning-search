@@ -11,17 +11,19 @@ export const ResultPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [total, setTotal] = useState(0);
   const [sourceOptions, setSourceOptions] = useState([]);
+  const [codeOptions, setCodeOptions] = useState([]);
 
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const searchTerm = queryParams.get("search");
   const source = queryParams.get("source");
+  const code = queryParams.get("code");
 
   useEffect(() => {
     const fetchResults = async () => {
       try {
         setIsLoading(true);
-        const data = await doOpensearchQuery(searchTerm, source);
+        const data = await doOpensearchQuery(searchTerm, source, code);
 
         setTotal(data.hits.total.value);
         setResults(data.hits.hits.map((r) => r._source));
@@ -31,6 +33,14 @@ export const ResultPage = () => {
             count: bucket.doc_count,
           }))
         );
+        setCodeOptions(
+          data.aggregations.nested_related_industries.code_terms.buckets.map(
+            (bucket) => ({
+              key: bucket.key,
+              count: bucket.doc_count,
+            })
+          )
+        );
         setIsLoading(false);
       } catch (error) {
         console.error("Error fetching results:", error);
@@ -38,7 +48,7 @@ export const ResultPage = () => {
     };
 
     fetchResults();
-  }, [searchTerm, source]);
+  }, [searchTerm, source, code]);
 
   return (
     <div className="result-page">
@@ -47,6 +57,8 @@ export const ResultPage = () => {
           searchTerm={searchTerm}
           source={source}
           sourceOptions={sourceOptions}
+          code={code}
+          codeOptions={codeOptions}
         />
       </div>
       <h1>Search Results ({total})</h1>
