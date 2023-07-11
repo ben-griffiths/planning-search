@@ -1,6 +1,13 @@
 import config from "../../config";
 
-export const doOpensearchQuery = async (searchTerm, source, code) => {
+export const doOpensearchQuery = async (
+  searchTerm,
+  source,
+  code,
+  latlng,
+  from,
+  until
+) => {
   const query = {
     bool: {
       must: [
@@ -29,9 +36,27 @@ export const doOpensearchQuery = async (searchTerm, source, code) => {
     });
   }
 
+  if (from || until) {
+    query.bool.must.push({
+      range: {
+        validation_date: { gte: from, lte: until, format: "YYYY-MM-DD" },
+      },
+    });
+  }
+
   if (source) {
     query.bool.filter = {
       terms: { source: source.split(",") },
+    };
+  }
+
+  if (latlng) {
+    query.bool.filter = {
+      ...query.bool.filter,
+      geo_distance: {
+        distance: "1km",
+        location: latlng,
+      },
     };
   }
 
@@ -87,4 +112,16 @@ export const doOpensearchQuery = async (searchTerm, source, code) => {
   }
 
   return response.json();
+};
+
+export const geocodeAddress = async (address) => {
+  const geocoder = new window.google.maps.Geocoder();
+  const { results } = await geocoder.geocode({ address: address });
+  const location = results[0].geometry.location;
+  return `${location.lat()},${location.lng()}`;
+};
+
+export const isCoordinate = (coordinates) => {
+  const latLngRegex = /^(-?\d+(\.\d+)?),\s*(-?\d+(\.\d+)?)$/;
+  return latLngRegex.test(coordinates);
 };

@@ -4,7 +4,7 @@ import { useLocation } from "react-router-dom";
 import SearchBar from "../SearchBar";
 import { MapResult } from "./MapResult";
 import Result from "./Result";
-import { doOpensearchQuery } from "./logic";
+import { doOpensearchQuery, geocodeAddress, isCoordinate } from "./logic";
 
 export const ResultPage = () => {
   const [results, setResults] = useState([]);
@@ -13,17 +13,32 @@ export const ResultPage = () => {
   const [sourceOptions, setSourceOptions] = useState([]);
   const [codeOptions, setCodeOptions] = useState([]);
 
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
+  const navLocation = useLocation();
+  const queryParams = new URLSearchParams(navLocation.search);
   const searchTerm = queryParams.get("search");
   const source = queryParams.get("source");
   const code = queryParams.get("code");
+  const location = queryParams.get("location");
+  const until = queryParams.get("until");
+  const from = queryParams.get("from");
 
   useEffect(() => {
     const fetchResults = async () => {
       try {
         setIsLoading(true);
-        const data = await doOpensearchQuery(searchTerm, source, code);
+        let latlng;
+        if (location) {
+          if (isCoordinate(location)) latlng = location;
+          else latlng = await geocodeAddress(location);
+        }
+        const data = await doOpensearchQuery(
+          searchTerm,
+          source,
+          code,
+          latlng,
+          from,
+          until
+        );
 
         setTotal(data.hits.total.value);
         setResults(data.hits.hits.map((r) => r._source));
@@ -48,7 +63,7 @@ export const ResultPage = () => {
     };
 
     fetchResults();
-  }, [searchTerm, source, code]);
+  }, [searchTerm, source, code, location, from, until]);
 
   return (
     <div className="result-page">
@@ -59,6 +74,9 @@ export const ResultPage = () => {
           sourceOptions={sourceOptions}
           code={code}
           codeOptions={codeOptions}
+          location={location}
+          from={from}
+          until={until}
         />
       </div>
       <h1>Search Results ({total})</h1>

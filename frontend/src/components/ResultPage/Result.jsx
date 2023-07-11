@@ -1,20 +1,6 @@
 import React from "react";
-import sic from "./sic.json";
 
 const Result = ({ result }) => {
-  const renderIndustryCodes = () => {
-    if (result.related_industries && result.related_industries.length > 0) {
-      return result.related_industries
-        .filter((i) => i.code in sic)
-        .map((industry) => (
-          <div key={industry.code} className="lozenge">
-            {sic[industry.code]}
-          </div>
-        ));
-    }
-    return null;
-  };
-
   return (
     <div className="result">
       <div className="result-details">
@@ -23,7 +9,6 @@ const Result = ({ result }) => {
         <p>{result.validation_date}</p>
         <p>{result.proposal}</p>
       </div>
-      <div className="result-industry">{renderIndustryCodes()}</div>
       <div className="result-source">
         <p>Source: {result.source}</p>
       </div>

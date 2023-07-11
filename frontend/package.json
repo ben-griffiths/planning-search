@@ -19,7 +19,8 @@
     "start": "REACT_APP_GOOGLE_MAPS_API=/maps react-scripts start",
     "build": "REACT_APP_API_URL=https://tln7h57trpgrz7wdidyewispzq0tlqwy.lambda-url.eu-west-2.on.aws/ REACT_APP_GOOGLE_MAPS_API=https://tln7h57trpgrz7wdidyewispzq0tlqwy.lambda-url.eu-west-2.on.aws/maps react-scripts build && cp build/index.html build/404.html",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint --ext js,jsx src/"
   },
   "eslintConfig": {
     "extends": [
@@ -38,5 +39,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "devDependencies": {
+    "eslint": "^8.44.0"
+  },
+  "main": "index.js",
+  "license": "MIT"
 }
